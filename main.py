@@ -64,7 +64,8 @@ with open(output_file, 'w', newline='', encoding='utf-8') as file:
             print('original', line[0])
             print('changed', line[1])
             romanized = show_diff(get_sequence(line[0], line[1]))
-            print('romanized', romanized)
+            if line[0][-1] == 'ה' and romanized[-1] != 'ה':
+                romanized = romanized + 'ה'
             csvwriter.writerow([line[0], line[1], romanized])
         except IndexError:
             print(f"IndexError: {line} is missing a value")
