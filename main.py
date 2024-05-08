@@ -60,12 +60,13 @@ with open(output_file, 'w', newline='', encoding='utf-8') as file:
     csvwriter = csv.writer(file, delimiter='\t')
     for i, line in enumerate(read_file(input_file)):
         try:
-            print(f"{'line '+str(i+1):=^50}")
-            print('original', line[0])
-            print('changed', line[1])
-            romanized = show_diff(get_sequence(line[0], line[1]))
-            if line[0][-1] == 'ה' and romanized[-1] != 'ה':
-                romanized = romanized + 'ה'
-            csvwriter.writerow([line[0], line[1], romanized])
+            print(f"{'line '+str(i+1):=^30}")
+            print('Hebrew\t\t\t', line[0])
+            print('Niborski \t\t', line[1])
+            ALA_LC = show_diff(get_sequence(line[0], line[1]))
+            if line[0][-1] == 'ה' and ALA_LC[-1] != 'ה':
+                ALA_LC = ALA_LC + 'ה'
+            print('ALA-LC\t\t\t', ALA_LC)
+            csvwriter.writerow([line[0], line[1], ALA_LC])
         except IndexError:
             print(f"IndexError: {line} is missing a value")
