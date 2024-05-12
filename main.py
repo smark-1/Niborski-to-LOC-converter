@@ -1,6 +1,9 @@
 import csv
 import difflib
 
+# if set to True, create an additional line with the hyphen removed
+DUPLICATE_HYPHEN = True
+
 input_file = 'input.tsv'
 output_file = 'output.tsv'
 conversion_rules = 'rules.tsv'
@@ -55,18 +58,26 @@ def get_sequence(line1, line2):
     seqm = difflib.SequenceMatcher(None, line1, line2)
     return seqm
 
+
 # open the output file and write the results
 with open(output_file, 'w', newline='', encoding='utf-8') as file:
     csvwriter = csv.writer(file, delimiter='\t')
     for i, line in enumerate(read_file(input_file)):
         try:
-            print(f"{'line '+str(i+1):=^30}")
+            print(f"{'line ' + str(i + 1):=^30}")
             print('Hebrew\t\t\t', line[0])
             print('Niborski \t\t', line[1])
             ALA_LC = show_diff(get_sequence(line[0], line[1]))
             if line[0][-1] == 'ה' and ALA_LC[-1] != 'ה':
                 ALA_LC = ALA_LC + 'ה'
             print('ALA-LC\t\t\t', ALA_LC)
+            # if set to True, create an additional line with the hyphen removed
+            if DUPLICATE_HYPHEN:
+                if '־' in ALA_LC:
+                    print('ALA-LC (w/o ־) \t', ALA_LC.replace('־', ' '))
+                    csvwriter.writerow([line[0].replace('־', ' '),
+                                        line[1].replace('־', ' '),
+                                        ALA_LC.replace('־', ' ')])
             csvwriter.writerow([line[0], line[1], ALA_LC])
         except IndexError:
             print(f"IndexError: {line} is missing a value")
